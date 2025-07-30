@@ -53,7 +53,7 @@ jobs:
         run: go vet ./...
 
       - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2
 
       - name: Run golangci-lint
         run: golangci-lint run --timeout=5m
