@@ -1,3 +1,4 @@
+// Package migrations provides database migration utilities and management.
 package migrations
 
 import (
@@ -52,36 +53,36 @@ func NewMigrator(config Config) (*Migrator, error) {
 // Up runs all available migrations
 func (m *Migrator) Up() error {
 	log.Println("Running database migrations...")
-	
+
 	err := m.migrate.Up()
 	if err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("failed to run migrations: %w", err)
 	}
-	
+
 	if err == migrate.ErrNoChange {
 		log.Println("No new migrations to apply")
 	} else {
 		log.Println("Migrations completed successfully")
 	}
-	
+
 	return nil
 }
 
 // Down rolls back one migration
 func (m *Migrator) Down() error {
 	log.Println("Rolling back one migration...")
-	
+
 	err := m.migrate.Steps(-1)
 	if err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("failed to rollback migration: %w", err)
 	}
-	
+
 	if err == migrate.ErrNoChange {
 		log.Println("No migrations to rollback")
 	} else {
 		log.Println("Migration rollback completed successfully")
 	}
-	
+
 	return nil
 }
 
@@ -91,23 +92,23 @@ func (m *Migrator) Version() (uint, bool, error) {
 	if err != nil && err != migrate.ErrNilVersion {
 		return 0, false, fmt.Errorf("failed to get migration version: %w", err)
 	}
-	
+
 	if err == migrate.ErrNilVersion {
 		return 0, false, nil
 	}
-	
+
 	return version, dirty, nil
 }
 
 // Force sets the migration version without running migrations
 func (m *Migrator) Force(version int) error {
 	log.Printf("Forcing migration version to %d...", version)
-	
+
 	err := m.migrate.Force(version)
 	if err != nil {
 		return fmt.Errorf("failed to force migration version: %w", err)
 	}
-	
+
 	log.Printf("Migration version forced to %d", version)
 	return nil
 }
@@ -115,12 +116,12 @@ func (m *Migrator) Force(version int) error {
 // Drop drops all tables and removes migration history
 func (m *Migrator) Drop() error {
 	log.Println("WARNING: Dropping all database tables...")
-	
+
 	err := m.migrate.Drop()
 	if err != nil {
 		return fmt.Errorf("failed to drop database: %w", err)
 	}
-	
+
 	log.Println("Database dropped successfully")
 	return nil
 }

@@ -38,7 +38,10 @@ func (r *PostgresItemRepository) GetByID(ctx context.Context, id uuid.UUID) (*en
 }
 
 // GetByShoppingListID retrieves all items for a shopping list
-func (r *PostgresItemRepository) GetByShoppingListID(ctx context.Context, shoppingListID uuid.UUID) ([]*entities.Item, error) {
+func (r *PostgresItemRepository) GetByShoppingListID(
+	ctx context.Context,
+	shoppingListID uuid.UUID,
+) ([]*entities.Item, error) {
 	var items []*entities.Item
 	err := r.db.WithContext(ctx).Where("shopping_list_id = ?", shoppingListID).Find(&items).Error
 	return items, err

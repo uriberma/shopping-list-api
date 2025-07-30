@@ -26,7 +26,10 @@ type MockShoppingListService struct {
 // Ensure MockShoppingListService implements the interface
 var _ services.ShoppingListServiceInterface = (*MockShoppingListService)(nil)
 
-func (m *MockShoppingListService) CreateShoppingList(ctx context.Context, name, description string) (*entities.ShoppingList, error) {
+func (m *MockShoppingListService) CreateShoppingList(
+	ctx context.Context,
+	name, description string,
+) (*entities.ShoppingList, error) {
 	args := m.Called(ctx, name, description)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -50,7 +53,11 @@ func (m *MockShoppingListService) GetAllShoppingLists(ctx context.Context) ([]*e
 	return args.Get(0).([]*entities.ShoppingList), args.Error(1)
 }
 
-func (m *MockShoppingListService) UpdateShoppingList(ctx context.Context, id uuid.UUID, name, description string) (*entities.ShoppingList, error) {
+func (m *MockShoppingListService) UpdateShoppingList(
+	ctx context.Context,
+	id uuid.UUID,
+	name, description string,
+) (*entities.ShoppingList, error) {
 	args := m.Called(ctx, id, name, description)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)

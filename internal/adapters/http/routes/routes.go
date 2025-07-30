@@ -1,3 +1,4 @@
+// Package routes provides HTTP route configuration and setup for the API.
 package routes
 
 import (

@@ -1,3 +1,4 @@
+// Package persistence provides database persistence implementations for domain repositories.
 package persistence
 
 import (

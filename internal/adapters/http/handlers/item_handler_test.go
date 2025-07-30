@@ -41,7 +41,10 @@ func (m *MockItemService) GetItem(ctx context.Context, id uuid.UUID) (*entities.
 	return args.Get(0).(*entities.Item), args.Error(1)
 }
 
-func (m *MockItemService) GetItemsByShoppingListID(ctx context.Context, shoppingListID uuid.UUID) ([]*entities.Item, error) {
+func (m *MockItemService) GetItemsByShoppingListID(
+	ctx context.Context,
+	shoppingListID uuid.UUID,
+) ([]*entities.Item, error) {
 	args := m.Called(ctx, shoppingListID)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -49,7 +52,13 @@ func (m *MockItemService) GetItemsByShoppingListID(ctx context.Context, shopping
 	return args.Get(0).([]*entities.Item), args.Error(1)
 }
 
-func (m *MockItemService) UpdateItem(ctx context.Context, id uuid.UUID, name string, quantity int, completed bool) (*entities.Item, error) {
+func (m *MockItemService) UpdateItem(
+	ctx context.Context,
+	id uuid.UUID,
+	name string,
+	quantity int,
+	completed bool,
+) (*entities.Item, error) {
 	args := m.Called(ctx, id, name, quantity, completed)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -260,9 +269,9 @@ func TestItemHandler_GetItem(t *testing.T) {
 			itemID: uuid.New().String(),
 			mockSetup: func(m *MockItemService) {
 				expectedItem := &entities.Item{
-					ID:       uuid.MustParse("123e4567-e89b-12d3-a456-426614174000"),
-					Name:     "Test Item",
-					Quantity: 2,
+					ID:        uuid.MustParse("123e4567-e89b-12d3-a456-426614174000"),
+					Name:      "Test Item",
+					Quantity:  2,
 					Completed: false,
 				}
 				m.On("GetItem", mock.Anything, mock.AnythingOfType("uuid.UUID")).Return(expectedItem, nil)
@@ -347,15 +356,15 @@ func TestItemHandler_GetItemsByShoppingListID(t *testing.T) {
 			mockSetup: func(m *MockItemService) {
 				expectedItems := []*entities.Item{
 					{
-						ID:       uuid.New(),
-						Name:     "Milk",
-						Quantity: 2,
+						ID:        uuid.New(),
+						Name:      "Milk",
+						Quantity:  2,
 						Completed: false,
 					},
 					{
-						ID:       uuid.New(),
-						Name:     "Bread",
-						Quantity: 1,
+						ID:        uuid.New(),
+						Name:      "Bread",
+						Quantity:  1,
 						Completed: true,
 					},
 				}

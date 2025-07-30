@@ -142,38 +142,38 @@ func TestShoppingList_UpdateItem(t *testing.T) {
 	list.AddItem(item)
 
 	tests := []struct {
-		name        string
-		itemID      uuid.UUID
-		newName     string
-		newQuantity int
+		name         string
+		itemID       uuid.UUID
+		newName      string
+		newQuantity  int
 		newCompleted bool
-		wantErr     bool
-		expectedErr error
+		wantErr      bool
+		expectedErr  error
 	}{
 		{
-			name:        "successfully updates existing item",
-			itemID:      item.ID,
-			newName:     "Whole Milk",
-			newQuantity: 3,
+			name:         "successfully updates existing item",
+			itemID:       item.ID,
+			newName:      "Whole Milk",
+			newQuantity:  3,
 			newCompleted: true,
-			wantErr:     false,
+			wantErr:      false,
 		},
 		{
-			name:        "updates item with different values",
-			itemID:      item.ID,
-			newName:     "Skim Milk",
-			newQuantity: 1,
+			name:         "updates item with different values",
+			itemID:       item.ID,
+			newName:      "Skim Milk",
+			newQuantity:  1,
 			newCompleted: false,
-			wantErr:     false,
+			wantErr:      false,
 		},
 		{
-			name:        "fails to update non-existent item",
-			itemID:      uuid.New(),
-			newName:     "Non-existent",
-			newQuantity: 1,
+			name:         "fails to update non-existent item",
+			itemID:       uuid.New(),
+			newName:      "Non-existent",
+			newQuantity:  1,
 			newCompleted: false,
-			wantErr:     true,
-			expectedErr: ErrItemNotFound,
+			wantErr:      true,
+			expectedErr:  ErrItemNotFound,
 		},
 	}
 
