@@ -149,19 +149,19 @@ db-logs: ## Show database logs
 # Migration commands
 migrate-up: ## Run all pending migrations
 	@echo "Running database migrations..."
-	$(GOCMD) run ./cmd/migrator/main.go -action=up
+	$(GOCMD) run ./cmd/migrator/main.go -action=up -migrations-path=./cmd/migrator/migrations
 
 migrate-down: ## Rollback one migration
 	@echo "Rolling back one migration..."
-	$(GOCMD) run ./cmd/migrator/main.go -action=down
+	$(GOCMD) run ./cmd/migrator/main.go -action=down -migrations-path=./cmd/migrator/migrations
 
 migrate-version: ## Show current migration version
 	@echo "Checking migration version..."
-	$(GOCMD) run ./cmd/migrator/main.go -action=version
+	$(GOCMD) run ./cmd/migrator/main.go -action=version -migrations-path=./cmd/migrator/migrations
 
 migrate-force: ## Force migration to specific version (use VERSION=n)
 	@echo "Forcing migration to version $(VERSION)..."
-	$(GOCMD) run ./cmd/migrator/main.go -action=force -force-version=$(VERSION)
+	$(GOCMD) run ./cmd/migrator/main.go -action=force -force-version=$(VERSION) -migrations-path=./cmd/migrator/migrations
 
 migrate-drop: ## Drop all database tables (DANGEROUS)
 	@echo "WARNING: This will drop all database tables!"
