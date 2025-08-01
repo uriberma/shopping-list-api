@@ -20,10 +20,10 @@ GOFMT := $(GOCMD) fmt
 BUILD_FLAGS := -a -installsuffix cgo
 LDFLAGS := -w -s
 
-.PHONY: help build run test test-verbose test-coverage clean deps fmt lint docker-build docker-run docker-stop db-start db-stop db-reset all
+.PHONY: help build run test test-fast test-verbose test-watch clean deps fmt lint check docker-build docker-run docker-stop db-start db-stop db-reset all
 
 # Default target
-all: deps fmt lint test build
+all: deps lint test build
 
 # Help target
 help: ## Show this help message
@@ -41,78 +41,80 @@ run: ## Run the application locally (requires PostgreSQL to be running)
 	$(GOCMD) run ./cmd/server/main.go
 
 # Testing commands
-test: ## Run all tests
-	@echo "Running tests..."
-	$(GOTEST) ./...
-
-test-verbose: ## Run all tests with verbose output
-	@echo "Running tests with verbose output..."
-	$(GOTEST) -v ./...
-
-test-coverage: ## Run tests with coverage report
+test: ## Run all tests with coverage report
 	@echo "Running tests with coverage..."
-	$(GOTEST) -coverprofile=coverage.out ./...
-	$(GOCMD) tool cover -html=coverage.out -o coverage.html
-	@echo "Coverage report generated: coverage.html"
-
-test-infrastructure: ## Run infrastructure layer tests only
-	@echo "Running infrastructure tests..."
-	$(GOTEST) -v ./internal/infrastructure/...
-
-test-domain: ## Run domain layer tests only
-	@echo "Running domain tests..."
-	$(GOTEST) -v ./internal/domain/...
-
-test-application: ## Run application layer tests only
-	@echo "Running application tests..."
-	$(GOTEST) -v ./internal/application/...
-
-test-handlers: ## Run HTTP handler tests only
-	@echo "Running handler tests..."
-	$(GOTEST) -v ./internal/adapters/http/...
-
-test-unit: ## Run all unit tests (domain + handlers + infrastructure)
-	@echo "Running all unit tests..."
-	$(GOTEST) -v ./internal/domain/... ./internal/adapters/http/... ./internal/infrastructure/...
-
-test-summary: ## Run tests with summary and coverage
-	@echo "Running comprehensive test suite..."
-	@echo "=== Domain Layer Tests ==="
-	$(GOTEST) -v ./internal/domain/...
-	@echo "\n=== Infrastructure Layer Tests ==="
-	$(GOTEST) -v ./internal/infrastructure/...
-	@echo "\n=== HTTP Handler Tests ==="
-	$(GOTEST) -v ./internal/adapters/http/...
-	@echo "\n=== Overall Coverage Report ==="
-	$(GOTEST) -coverprofile=coverage.out ./...
+	$(GOTEST) -coverprofile=coverage.out $$(go list ./... | grep -v "/migrations")
 	$(GOCMD) tool cover -func=coverage.out
-	@echo "\nDetailed coverage report generated: coverage.html"
 	$(GOCMD) tool cover -html=coverage.out -o coverage.html
+	@echo "✅ Tests completed. Coverage report: coverage.html"
+
+test-fast: ## Run tests without coverage (faster)
+	@echo "Running tests (fast mode)..."
+	$(GOTEST) ./...
+	@echo "✅ Tests completed."
+
+test-verbose: ## Run tests with verbose output and coverage
+	@echo "Running tests with verbose output..."
+	$(GOTEST) -v -coverprofile=coverage.out $$(go list ./... | grep -v "/migrations")
+	$(GOCMD) tool cover -func=coverage.out
+	@echo "✅ Verbose tests completed."
 
 test-watch: ## Run tests in watch mode (requires entr)
 	@echo "Running tests in watch mode..."
 	@if command -v entr >/dev/null 2>&1; then \
-		find . -name '*.go' | entr -c make test; \
+		find . -name '*.go' | entr -c make test-fast; \
 	else \
 		echo "entr not installed. Install with: brew install entr (macOS) or apt-get install entr (Ubuntu)"; \
 	fi
 
 # Code quality commands
-fmt: ## Format Go code
-	@echo "Formatting code..."
-	$(GOFMT) ./...
+fmt: ## Format and fix all Go code formatting issues
+	@echo "Formatting and fixing code..."
+	gofmt -w .
+	@echo "Code formatting completed."
 
-lint: ## Run golangci-lint (requires golangci-lint to be installed)
-	@echo "Running linter..."
-	@if command -v golangci-lint >/dev/null 2>&1; then \
-		golangci-lint run; \
-	else \
-		echo "golangci-lint not installed. Install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"; \
-	fi
-
-vet: ## Run go vet
-	@echo "Running go vet..."
+lint: ## Check and fix all code quality issues (formatting, vetting, linting)
+	@echo "Running comprehensive code quality checks and fixes..."
+	@echo "1. Fixing formatting..."
+	gofmt -w .
+	@echo "2. Running go vet..."
 	$(GOCMD) vet ./...
+	@echo "3. Installing/running linter with auto-fix..."
+	@if command -v golangci-lint >/dev/null 2>&1; then \
+		golangci-lint run --fix --timeout=5m; \
+	elif [ -f "$$(go env GOPATH)/bin/golangci-lint" ]; then \
+		$$(go env GOPATH)/bin/golangci-lint run --fix --timeout=5m; \
+	else \
+		echo "Installing golangci-lint..."; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.55.2; \
+		$$(go env GOPATH)/bin/golangci-lint run --fix --timeout=5m; \
+	fi
+	@echo "All code quality issues fixed!"
+
+check: ## Check code quality without fixing (for CI/validation)
+	@echo "Checking code quality (no fixes)..."
+	@echo "1. Checking formatting..."
+	@if [ -n "$$(gofmt -l .)" ]; then \
+		echo "❌ The following files are not formatted correctly:"; \
+		gofmt -l .; \
+		echo "Run 'make fmt' to fix formatting issues."; \
+		exit 1; \
+	else \
+		echo "✅ All files are properly formatted."; \
+	fi
+	@echo "2. Running go vet..."
+	$(GOCMD) vet ./...
+	@echo "3. Running linter..."
+	@if command -v golangci-lint >/dev/null 2>&1; then \
+		golangci-lint run --timeout=5m; \
+	elif [ -f "$$(go env GOPATH)/bin/golangci-lint" ]; then \
+		$$(go env GOPATH)/bin/golangci-lint run --timeout=5m; \
+	else \
+		echo "Installing golangci-lint..."; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.55.2; \
+		$$(go env GOPATH)/bin/golangci-lint run --timeout=5m; \
+	fi
+	@echo "✅ All quality checks passed!"
 
 # Dependency management
 deps: ## Download and tidy dependencies

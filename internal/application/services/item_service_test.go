@@ -83,13 +83,13 @@ func TestNewItemService(t *testing.T) {
 
 func TestItemService_CreateItem(t *testing.T) {
 	tests := []struct {
-		name            string
-		itemName        string
-		quantity        int
-		shoppingListID  uuid.UUID
-		setupMocks      func(*MockItemRepository, *MockShoppingListRepository)
-		expectedError   error
-		expectedResult  bool
+		name           string
+		itemName       string
+		quantity       int
+		shoppingListID uuid.UUID
+		setupMocks     func(*MockItemRepository, *MockShoppingListRepository)
+		expectedError  error
+		expectedResult bool
 	}{
 		{
 			name:           "successful creation",

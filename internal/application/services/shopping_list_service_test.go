@@ -23,11 +23,11 @@ func TestNewShoppingListService(t *testing.T) {
 
 func TestShoppingListService_CreateShoppingList(t *testing.T) {
 	tests := []struct {
-		name          string
-		listName      string
-		description   string
-		setupMocks    func(*MockShoppingListRepository)
-		expectedError error
+		name           string
+		listName       string
+		description    string
+		setupMocks     func(*MockShoppingListRepository)
+		expectedError  error
 		expectedResult bool
 	}{
 		{
@@ -41,10 +41,10 @@ func TestShoppingListService_CreateShoppingList(t *testing.T) {
 			expectedResult: true,
 		},
 		{
-			name:        "empty name should fail",
-			listName:    "",
-			description: "Test Description",
-			setupMocks:  func(listRepo *MockShoppingListRepository) {},
+			name:           "empty name should fail",
+			listName:       "",
+			description:    "Test Description",
+			setupMocks:     func(listRepo *MockShoppingListRepository) {},
 			expectedError:  entities.ErrInvalidInput,
 			expectedResult: false,
 		},
@@ -183,7 +183,7 @@ func TestShoppingListService_GetAllShoppingLists(t *testing.T) {
 			setupMocks: func(listRepo *MockShoppingListRepository, itemRepo *MockItemRepository) {
 				list1ID := uuid.New()
 				list2ID := uuid.New()
-				
+
 				expectedLists := []*entities.ShoppingList{
 					{ID: list1ID, Name: "List 1"},
 					{ID: list2ID, Name: "List 2"},
