@@ -168,7 +168,7 @@ jobs:
           echo "📊 Badge Information:"
           echo "Coverage: ${COVERAGE_PERCENT:-0}% (${COVERAGE_BADGE_URL:-N/A})"
           echo "Code Quality: ${LINT_GRADE:-Unknown} (https://img.shields.io/badge/go%20report-${LINT_GRADE:-Unknown}-${LINT_COLOR:-gray})"
-          echo "Build Status: Available at https://github.com/uriberma/go-shopping-list-api/actions/workflows/ci.yml/badge.svg"
+          echo "Build Status: Available at https://github.com/uriberma/shopping-list-api/actions/workflows/ci.yml/badge.svg"
           echo "Go Version: 1.24 (https://img.shields.io/badge/go-1.24-blue)"
           echo ""
           echo "💡 To update README badges manually, use these URLs:"
@@ -182,7 +182,7 @@ jobs:
             "coverage_url": "${COVERAGE_BADGE_URL:-https://img.shields.io/badge/coverage-0%25-red}",
             "quality_grade": "${LINT_GRADE:-A+}",
             "quality_url": "https://img.shields.io/badge/go%20report-${LINT_GRADE:-A+}-${LINT_COLOR:-brightgreen}",
-            "build_url": "https://github.com/uriberma/go-shopping-list-api/actions/workflows/ci.yml/badge.svg",
+            "build_url": "https://github.com/uriberma/shopping-list-api/actions/workflows/ci.yml/badge.svg",
             "go_version_url": "https://img.shields.io/badge/go-1.24-blue"
           }
           EOF
