@@ -101,16 +101,6 @@ jobs:
         run: |
           psql -h localhost -U postgres -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" shopping_list_db_test
 
-      - name: Run database migrations
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASSWORD: password
-          DB_NAME: shopping_list_db_test
-          DB_SSLMODE: disable
-        run: make migrate-up
-
       - name: Build application
         run: |
           echo "Building server..."
@@ -214,7 +204,6 @@ jobs:
           DB_SSLMODE: disable
         run: |
           echo "Setting up integration test environment..."
-          make migrate-up
           echo "Integration tests would run here (placeholder for future implementation)"
           # Future: Add actual integration tests that test the full API
 
