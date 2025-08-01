@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: write
+  pull-requests: read
+
 env:
   GO_VERSION: '1.24'
   POSTGRES_VERSION: '15'
@@ -164,6 +168,38 @@ jobs:
           echo "COVERAGE_BADGE_URL=$BADGE_URL" >> $GITHUB_ENV
           echo "COVERAGE_PERCENT=$COVERAGE" >> $GITHUB_ENV
 
+      - name: Update README badges
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "📊 Updating README badges..."
+          echo "Coverage: ${COVERAGE_PERCENT:-0}%"
+          echo "Quality: ${LINT_GRADE:-A+}"
+          
+          # Update coverage badge in README
+          sed -i "s|https://img.shields.io/badge/coverage-[0-9]*\.*[0-9]*%25-[a-z]*|${COVERAGE_BADGE_URL}|g" README.md
+          
+          # Update quality badge in README
+          QUALITY_BADGE_URL="https://img.shields.io/badge/go%20report-${LINT_GRADE:-A+}-${LINT_COLOR:-brightgreen}"
+          sed -i "s|https://img.shields.io/badge/go%20report-[A-Z+-]*-[a-z]*|${QUALITY_BADGE_URL}|g" README.md
+          
+          echo "✅ README badges updated"
+
+      - name: Commit updated README
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Check if there are changes to commit
+          if git diff --quiet README.md; then
+            echo "No changes to README badges"
+          else
+            git add README.md
+            git commit -m "Update coverage badge to ${COVERAGE_PERCENT:-0}% [skip ci]"
+            git push
+            echo "✅ README badges committed and pushed"
+          fi
+
       - name: Display badge information
         run: |
           echo "📊 Badge Information:"
@@ -171,12 +207,8 @@ jobs:
           echo "Code Quality: ${LINT_GRADE:-Unknown} (https://img.shields.io/badge/go%20report-${LINT_GRADE:-Unknown}-${LINT_COLOR:-gray})"
           echo "Build Status: Available at https://github.com/uriberma/shopping-list-api/actions/workflows/ci.yml/badge.svg"
           echo "Go Version: 1.24 (https://img.shields.io/badge/go-1.24-blue)"
-          echo ""
-          echo "💡 To update README badges manually, use these URLs:"
-          echo "Coverage: ${COVERAGE_BADGE_URL:-https://img.shields.io/badge/coverage-0%25-red}"
-          echo "Quality: https://img.shields.io/badge/go%20report-${LINT_GRADE:-A+}-${LINT_COLOR:-brightgreen}"
           
-          # Create badge data file for potential future automation
+          # Create badge data file for reference
           cat > badge-data.json << EOF
           {
             "coverage": "${COVERAGE_PERCENT:-0}",
