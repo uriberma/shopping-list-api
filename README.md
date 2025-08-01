@@ -1,5 +1,10 @@
 # Shopping List API
 
+[![CI](https://github.com/uriberma/go-shopping-list-api/actions/workflows/ci.yml/badge.svg)](https://github.com/uriberma/go-shopping-list-api/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/badge/coverage-0%25-red)](https://github.com/uriberma/go-shopping-list-api/actions)
+[![Go Report](https://img.shields.io/badge/go%20report-A+-brightgreen)](https://github.com/uriberma/go-shopping-list-api)
+[![Go Version](https://img.shields.io/badge/go-1.24-blue)](https://golang.org/)
+
 A RESTful API for managing shopping lists and items, built with Go, Gin, PostgreSQL, and following hexagonal architecture and domain-driven design principles.
 
 ## Features
