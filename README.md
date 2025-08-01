@@ -1,7 +1,7 @@
 # Shopping List API
 
 [![CI](https://github.com/uriberma/shopping-list-api/actions/workflows/ci.yml/badge.svg)](https://github.com/uriberma/shopping-list-api/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-48.7%25-orange)](https://github.com/uriberma/shopping-list-api/actions)
+[![Coverage](https://img.shields.io/badge/coverage-66.9%25-yellow)](https://github.com/uriberma/shopping-list-api/actions)
 [![Go Report](https://img.shields.io/badge/go%20report-A+-brightgreen)](https://github.com/uriberma/shopping-list-api)
 [![Go Version](https://img.shields.io/badge/go-1.24-blue)](https://golang.org/)
 
