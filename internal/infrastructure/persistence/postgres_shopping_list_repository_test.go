@@ -229,3 +229,37 @@ func TestPostgresShoppingListRepository_Delete(t *testing.T) {
 		})
 	}
 }
+
+func TestPostgresShoppingListRepository_GetByID_DatabaseError(t *testing.T) {
+	// Test with a closed database connection to trigger database errors
+	db := setupTestDB(t)
+	repo := NewPostgresShoppingListRepository(db)
+	ctx := context.Background()
+
+	// Close the database connection to simulate database errors
+	sqlDB, err := db.DB()
+	require.NoError(t, err)
+	sqlDB.Close()
+
+	// This should trigger a database error (not record not found)
+	_, err = repo.GetByID(ctx, uuid.New())
+	assert.Error(t, err)
+	assert.NotEqual(t, entities.ErrShoppingListNotFound, err)
+}
+
+func TestPostgresShoppingListRepository_Delete_DatabaseError(t *testing.T) {
+	// Test with a closed database connection to trigger database errors
+	db := setupTestDB(t)
+	repo := NewPostgresShoppingListRepository(db)
+	ctx := context.Background()
+
+	// Close the database connection to simulate database errors
+	sqlDB, err := db.DB()
+	require.NoError(t, err)
+	sqlDB.Close()
+
+	// This should trigger a database error
+	err = repo.Delete(ctx, uuid.New())
+	assert.Error(t, err)
+	assert.NotEqual(t, entities.ErrShoppingListNotFound, err)
+}

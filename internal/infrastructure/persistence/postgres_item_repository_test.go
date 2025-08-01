@@ -319,3 +319,37 @@ func TestPostgresItemRepository_CascadeDelete(t *testing.T) {
 	_, err = listRepo.GetByID(ctx, testList.ID)
 	assert.Equal(t, entities.ErrShoppingListNotFound, err)
 }
+
+func TestPostgresItemRepository_GetByID_DatabaseError(t *testing.T) {
+	// Test with a closed database connection to trigger database errors
+	db, _ := setupTestDBForItems(t)
+	repo := NewPostgresItemRepository(db)
+	ctx := context.Background()
+
+	// Close the database connection to simulate database errors
+	sqlDB, err := db.DB()
+	require.NoError(t, err)
+	sqlDB.Close()
+
+	// This should trigger a database error (not record not found)
+	_, err = repo.GetByID(ctx, uuid.New())
+	assert.Error(t, err)
+	assert.NotEqual(t, entities.ErrItemNotFound, err)
+}
+
+func TestPostgresItemRepository_Delete_DatabaseError(t *testing.T) {
+	// Test with a closed database connection to trigger database errors
+	db, _ := setupTestDBForItems(t)
+	repo := NewPostgresItemRepository(db)
+	ctx := context.Background()
+
+	// Close the database connection to simulate database errors
+	sqlDB, err := db.DB()
+	require.NoError(t, err)
+	sqlDB.Close()
+
+	// This should trigger a database error
+	err = repo.Delete(ctx, uuid.New())
+	assert.Error(t, err)
+	assert.NotEqual(t, entities.ErrItemNotFound, err)
+}

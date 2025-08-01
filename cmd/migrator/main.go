@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/uriberma/go-shopping-list-api/internal/infrastructure/migrations"
 )
 
 func main() {
@@ -29,13 +27,13 @@ func main() {
 	migrPath := getMigrationsPath(*migrationsPath)
 
 	// Create migrator config
-	config := migrations.Config{
+	config := Config{
 		DatabaseURL:    dbURL,
 		MigrationsPath: migrPath,
 	}
 
 	// Create migrator
-	migrator, err := migrations.NewMigrator(config)
+	migrator, err := NewMigrator(config)
 	if err != nil {
 		log.Fatalf("Failed to create migrator: %v", err)
 	}
