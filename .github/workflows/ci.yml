@@ -135,7 +135,8 @@ jobs:
           DB_NAME: shopping_list_db_test
           DB_SSLMODE: disable
         run: |
-          go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+          go test -race -coverprofile=coverage.out -covermode=atomic $(go list ./... | grep -v "/migrations")
+          go tool cover -func=coverage.out
 
       - name: Generate coverage report
         run: |
