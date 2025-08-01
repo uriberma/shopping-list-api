@@ -52,7 +52,7 @@ The project follows hexagonal architecture with these layers:
 
 ### Prerequisites
 
-- Go 1.23+
+- Go 1.24+
 - PostgreSQL 15+
 - Docker & Docker Compose (optional)
 
